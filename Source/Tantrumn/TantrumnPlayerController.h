@@ -19,6 +19,7 @@ public:
 	void RequestLookUp(float AxisValue);
 	void RequestLookRight(float AxisValue);
 	void RequestJump();
+	void RequestCrouch();
 
 	// Base lookup rate, in deg/sec. Other scaling may affect final lookup rate.
 	UPROPERTY(EditAnywhere, Category = "Look")

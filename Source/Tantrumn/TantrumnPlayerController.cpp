@@ -9,11 +9,12 @@ void ATantrumnPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	if (InputComponent)
 	{
-		InputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestJump);
+		InputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestJump);
+		InputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Pressed, this, &ATantrumnPlayerController::RequestCrouch);
 		InputComponent->BindAxis(TEXT("MoveForward"), this, &ATantrumnPlayerController::RequestMoveForward);
 		InputComponent->BindAxis(TEXT("MoveRight"), this, &ATantrumnPlayerController::RequestMoveRight);
 		InputComponent->BindAxis(TEXT("LookUp"), this, &ATantrumnPlayerController::RequestLookUp);
-		InputComponent->BindAxis(TEXT("MoveRight"), this, &ATantrumnPlayerController::RequestLookRight);
+		InputComponent->BindAxis(TEXT("LookRight"), this, &ATantrumnPlayerController::RequestLookRight);
 		
 	}
 }
@@ -50,5 +51,18 @@ void ATantrumnPlayerController::RequestJump()
 	if (GetCharacter())
 	{
 		GetCharacter()->Jump();
+	}
+}
+
+void ATantrumnPlayerController::RequestCrouch()
+{
+	if (GetCharacter())
+	{
+		GetCharacter()->Crouch();
+	}
+
+	if (GetCharacter()->bIsCrouched)
+	{
+		GetCharacter()->UnCrouch();
 	}
 }
