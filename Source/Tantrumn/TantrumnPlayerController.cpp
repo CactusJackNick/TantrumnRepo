@@ -59,6 +59,7 @@ void ATantrumnPlayerController::RequestJump()
 
 void ATantrumnPlayerController::RequestCrouch()
 {
+	if (!GetCharacter()->GetCharacterMovement()->IsMovingOnGround()) { return; }
 	if (GetCharacter())
 	{
 		GetCharacter()->Crouch();
