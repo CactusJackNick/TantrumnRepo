@@ -7,6 +7,7 @@
 #include "TantrumnPlayerController.h"
 
 // Sets default values
+
 ATantrumnCharacterBase::ATantrumnCharacterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -84,5 +85,31 @@ void ATantrumnCharacterBase::RequestSprintStart()
 void ATantrumnCharacterBase::RequestSprintEnd()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+}
+
+void ATantrumnCharacterBase::OnStunBegin(float StunRatio)
+{
+	if (bIsStunned)
+	{
+		//for now just early exit, alternative option would be to add to the stun time
+		return;
+	}
+
+	const float StunDelt = MaxStunTime - MinStunTime;
+	StunTime = MinStunTime + (StunRatio * StunDelt);
+	StunBeginTimestamp = FApp::GetCurrentTime();
+	bIsStunned = true;
+	if (bIsSprinting)
+	{
+		RequestSprintEnd();
+	}
+
+}
+
+void ATantrumnCharacterBase::OnStunEnd()
+{
+	StunBeginTimestamp = 0.0f;
+	StunTime = 0.0f;
+	//return the speed
 }
 

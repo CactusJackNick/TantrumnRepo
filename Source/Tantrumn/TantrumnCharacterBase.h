@@ -15,6 +15,9 @@ class TANTRUMN_API ATantrumnCharacterBase : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ATantrumnCharacterBase();
+	
+	void RequestSprintStart();
+	void RequestSprintEnd();
 
 protected:
 	// Called when the game starts or when spawned
@@ -38,6 +41,7 @@ protected:
 
 	float StunTime = 0.0f;
 	float StunBeginTimestamp = 0.0f;
+	//float CurrentStunTimer = 0.0f;
 
 	bool bIsStunned = false;
 	bool bIsSprinting = false;
@@ -45,6 +49,7 @@ protected:
 	float MaxWalkSpeed = 0.0f;
 
 	void OnStunBegin(float StunRatio);
+	//void UpdateStun(float DeltaTime);
 	void OnStunEnd();
 
 public:	
