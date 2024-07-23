@@ -7,6 +7,18 @@
 #include "TantrumnPlayerController.h"
 #include "TantrumnCharacterBase.generated.h"
 
+class AThrowableActor;
+
+UENUM(BlueprintType)
+enum class ECharacterThrowState : uint8
+{
+	None			UMETA(DisplayName = "None"),
+	RequestingPull	UMETA(DisplayName = "RequestingPull"),
+	Pulling			UMETA(DisplayName = "Pulling"),
+	Attached		UMETA(DisplayName = "Attached"),
+	Throwing		UMETA(DisplayName = "Throwing"),
+};
+
 UCLASS()
 class TANTRUMN_API ATantrumnCharacterBase : public ACharacter
 {
@@ -19,9 +31,52 @@ public:
 	void RequestSprintStart();
 	void RequestSprintEnd();
 
+	void RequestThrowObject();
+	void RequestPullObject();
+	void RequestStopPullObject();
+	void ResetThrowableObject();
+
+	void OnThrowableAttached(AThrowableActor* InThrowableActor);
+
+	bool CanThrowObject() const { return CharacterThrowState == ECharacterThrowState::Attached; }
+
+	UFUNCTION(BlueprintPure)
+	bool IsPullingObject() const { return CharacterThrowState == ECharacterThrowState::RequestingPull || CharacterThrowState == ECharacterThrowState::Pulling; }
+
+	UFUNCTION(BlueprintPure)
+	ECharacterThrowState GetCharacterThrowState() const { return CharacterThrowState; }
+
+	UFUNCTION(BlueprintPure)
+	bool IsStunned() const { return bIsStunned; }
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void SphereCastPlayerView();
+	void SphereCastActorTransform();
+	void LineCastActorTransform();
+	void ProcessTraceResult(const FHitResult& HitResult);
+
+	bool PlayThrowMontage();
+	void UnbindMontage();
+
+	UFUNCTION()
+	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
+
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	UFUNCTION()
+	void OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+
+	UFUNCTION()
+	void OnNotifyEndReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+
+	void OnStunBegin(float StunRatio);
+	void UpdateStun();
+	void OnStunEnd();
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float SprintSpeed = 1200.0f;
@@ -48,9 +103,28 @@ protected:
 
 	float MaxWalkSpeed = 0.0f;
 
-	void OnStunBegin(float StunRatio);
-	//void UpdateStun(float DeltaTime);
-	void OnStunEnd();
+
+	//replace booleans with an enum when they are associated and can not all be true
+	/*bool bIsLoaded = false;
+	bool bIsPullingObject = false;
+	bool bIsThrowingObject = false;*/
+
+	UPROPERTY(VisibleAnywhere, Category = "Throw")
+	ECharacterThrowState CharacterThrowState = ECharacterThrowState::None;
+
+	UPROPERTY(EditAnywhere, Category = "Throw", meta = (ClampMin = "0.0", Unit = "ms"))
+	float ThrowSpeed = 2000.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UAnimMontage* ThrowMontage = nullptr;
+
+	FOnMontageBlendingOutStarted BlendingOutDelegate;
+	FOnMontageEnded MontageEndedDelegate;
+
+private:
+
+	UPROPERTY()
+	AThrowableActor* ThrowableActor;
 
 public:	
 	// Called every frame

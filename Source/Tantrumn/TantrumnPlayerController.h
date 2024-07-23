@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "TantrumnPlayerController.generated.h"
 
+class ATantrumGameModeBase;
+
 UCLASS()
 class TANTRUMN_API ATantrumnPlayerController : public APlayerController
 {
@@ -18,6 +20,11 @@ public:
 	void RequestMoveRight(float AxisValue);
 	void RequestLookUp(float AxisValue);
 	void RequestLookRight(float AxisValue);
+	void RequestThrowObject(float AxisValue);
+
+	void RequestPullObject();
+	void RequestStopPullObject();
+
 	void RequestJump();
 	void RequestCrouch();
 	void RequestSprintStart();
@@ -30,6 +37,13 @@ public:
 	// Base lookup rate, in deg/sec. Other scaling may affect final lookup rate.
 	UPROPERTY(EditAnywhere, Category = "Look")
 	float BaseLookRightRate = 90.0f;
+
+	//used to determine flick of axis
+	//float LastDelta = 0.0f;
+	float LastAxis = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	float FlickThreshold = 0.75f;
 
 protected:
 	float RunSpeed = 600.f;
