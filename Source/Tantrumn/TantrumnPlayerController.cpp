@@ -14,6 +14,12 @@ static TAutoConsoleVariable<bool> CVarDisplayLaunchInputDelta(
 	TEXT("Display Launch Input Delta"),
 	ECVF_Default);
 
+void ATantrumnPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	GameModeRef = Cast<ATantrumGameModeBase>(GetWorld()->GetAuthGameMode());
+}
+
 void ATantrumnPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -39,6 +45,7 @@ void ATantrumnPlayerController::SetupInputComponent()
 
 void ATantrumnPlayerController::RequestMoveForward(float AxisValue)
 {
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (AxisValue != 0.f)
 	{
 		FRotator const ControlSpaceRot = GetControlRotation();
@@ -49,9 +56,13 @@ void ATantrumnPlayerController::RequestMoveForward(float AxisValue)
 
 void ATantrumnPlayerController::RequestMoveRight(float AxisValue)
 {
-	FRotator const ControlSpaceRot = GetControlRotation();
-	// transform to world space and add it
-	GetPawn()->AddMovementInput(FRotationMatrix(ControlSpaceRot).GetScaledAxis(EAxis::Y), AxisValue);
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
+	if (AxisValue != 0.f) 
+	{
+		FRotator const ControlSpaceRot = GetControlRotation();
+		// transform to world space and add it
+		GetPawn()->AddMovementInput(FRotationMatrix(ControlSpaceRot).GetScaledAxis(EAxis::Y), AxisValue);
+	}
 }
 
 void ATantrumnPlayerController::RequestLookUp(float AxisValue)
@@ -112,6 +123,7 @@ void ATantrumnPlayerController::RequestStopPullObject()
 
 void ATantrumnPlayerController::RequestJump()
 {
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (GetCharacter())
 	{
 		GetCharacter()->Jump();
@@ -120,6 +132,7 @@ void ATantrumnPlayerController::RequestJump()
 
 void ATantrumnPlayerController::RequestCrouch()
 {
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (!GetCharacter()->GetCharacterMovement()->IsMovingOnGround()) { return; }
 	if (GetCharacter())
 	{
@@ -134,6 +147,7 @@ void ATantrumnPlayerController::RequestCrouch()
 
 void ATantrumnPlayerController::RequestSprintStart()
 {
+	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(GetCharacter()))
 	{
 		TantrumnCharacterBase->RequestSprintStart();

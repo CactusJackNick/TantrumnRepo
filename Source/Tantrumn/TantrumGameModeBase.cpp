@@ -12,10 +12,9 @@ void ATantrumGameModeBase::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentGameState = EGameState::Waiting;
-	/*CurrentGameState = EGameState::Waiting;
 	DisplayCountdown();
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATantrumnGameModeBase::StartGame, GameCountdownDuration, false);*/
-	StartGame();
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATantrumGameModeBase::StartGame, GameCountdownDuration, false);
+	//StartGame();
 }
 
 EGameState ATantrumGameModeBase::GetCurrentGameState() const
@@ -32,14 +31,14 @@ void ATantrumGameModeBase::PlayerReachedEnd()
 	PC->SetShowMouseCursor(true);
 }
 
-/*void ATantrumGameModeBase::DisplayCountdown()
+void ATantrumGameModeBase::DisplayCountdown()
 {
-	if (!GameWidgetClass) { return; }
-	PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	GameWidget = CreateWidget<UTantrumnGameWidget>(PC, GameWidgetClass);
-	GameWidget->AddToViewport();
-	GameWidget->StartCountdown(GameCountdownDuration, this);
-}*/
+	//if (!GameWidgetClass) { return; }
+	//PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	//GameWidget = CreateWidget<UTantrumnGameWidget>(PC, GameWidgetClass);
+	//GameWidget->AddToViewport();
+	//GameWidget->StartCountdown(GameCountdownDuration, this);
+}
 
 void ATantrumGameModeBase::StartGame()
 {

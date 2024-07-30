@@ -38,7 +38,7 @@ private:
 	// --- VARS --- //
 
 	// Create and set CurrentGameState to NONE. This will be tracked in the code file. 
-	UPROPERTY(VisibleAnywhere, Category = "States")
+	UPROPERTY(VisibleAnywhere, Category = "States", meta = (AllowPrivateAccess = "true"))
 	EGameState CurrentGameState = EGameState::None;
 	// Countdown before gameplay state begins. Exposed so we can easily change this in BP editor. 
 	UPROPERTY(EditAnywhere, Category = "Game Details")

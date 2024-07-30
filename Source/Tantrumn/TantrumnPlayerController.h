@@ -14,6 +14,9 @@ class TANTRUMN_API ATantrumnPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
+
+	virtual void BeginPlay() override;
+
 	void SetupInputComponent() override;
 
 	void RequestMoveForward(float AxisValue);
@@ -44,6 +47,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	float FlickThreshold = 0.75f;
+
+	ATantrumGameModeBase* GameModeRef;
 
 protected:
 	float RunSpeed = 600.f;
