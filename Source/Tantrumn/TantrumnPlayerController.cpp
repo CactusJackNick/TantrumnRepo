@@ -77,7 +77,7 @@ void ATantrumnPlayerController::RequestThrowObject(float AxisValue)
 			{
 				if (fabs(currentDelta) > 0.0f)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Axis: %f LastAxis: %f currentDelta: %f"), AxisValue, LastAxis);
+					UE_LOG(LogTemp, Warning, TEXT("Axis: %f LastAxis: %f currentDelta: %f"), AxisValue, LastAxis, currentDelta);
 				}
 			}
 			LastAxis = AxisValue;
