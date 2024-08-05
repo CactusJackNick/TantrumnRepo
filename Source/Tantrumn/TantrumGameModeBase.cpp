@@ -33,20 +33,21 @@ void ATantrumGameModeBase::PlayerReachedEnd()
 
 void ATantrumGameModeBase::DisplayCountdown()
 {
-	//if (!GameWidgetClass) { return; }
-	//PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	//GameWidget = CreateWidget<UTantrumnGameWidget>(PC, GameWidgetClass);
-	//GameWidget->AddToViewport();
-	//GameWidget->StartCountdown(GameCountdownDuration, this);
+	if (!GameWidgetClass) { return; }
+
+	PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	GameWidget = CreateWidget<UTantrumnGameWidget>(PC, GameWidgetClass);
+	GameWidget->AddToViewport();
+	GameWidget->StartCountdown(GameCountdownDuration, this);
 }
 
 void ATantrumGameModeBase::StartGame()
 {
 	CurrentGameState = EGameState::Playing;
-	FInputModeGameOnly InputMode;
-	PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	PC->SetInputMode(InputMode);
-	PC->SetShowMouseCursor(false);
+	//FInputModeGameOnly InputMode;
+	//PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	//PC->SetInputMode(InputMode);
+	//PC->SetShowMouseCursor(false);
 
 }
 

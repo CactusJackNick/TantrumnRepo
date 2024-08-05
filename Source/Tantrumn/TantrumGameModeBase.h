@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 
-//#include "TantrumnGameWidget.h"
+#include "TantrumnGameWidget.h"
 #include "GameFramework/GameModeBase.h"
 #include "TantrumGameModeBase.generated.h"
 
@@ -38,7 +38,7 @@ private:
 	// --- VARS --- //
 
 	// Create and set CurrentGameState to NONE. This will be tracked in the code file. 
-	UPROPERTY(VisibleAnywhere, Category = "States", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = "States")
 	EGameState CurrentGameState = EGameState::None;
 	// Countdown before gameplay state begins. Exposed so we can easily change this in BP editor. 
 	UPROPERTY(EditAnywhere, Category = "Game Details")
@@ -47,9 +47,9 @@ private:
 	FTimerHandle TimerHandle;
 
 	UPROPERTY()
-	//UTantrumnGameWidget* GameWidget; // Object we'll be creating and adding to the Viewport
-	//UPROPERTY(EditAnywhere, Category = "Widget")
-	//TSubclassOf<UTantrumnGameWidget> GameWidgetClass; // Exposed class to check the type of widget to display
+	UTantrumnGameWidget* GameWidget; // Object we'll be creating and adding to the Viewport
+	UPROPERTY(EditAnywhere, Category = "Widget")
+	TSubclassOf<UTantrumnGameWidget> GameWidgetClass; // Exposed class to check the type of widget to display
 
 	APlayerController* PC = nullptr;
 
