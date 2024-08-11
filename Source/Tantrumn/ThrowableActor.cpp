@@ -109,8 +109,10 @@ bool AThrowableActor::Pull(AActor* InActor)
 
 void AThrowableActor::Launch(const FVector& InitialVelocity, AActor* Target /* = nullptr */)
 {
+	UE_LOG(LogTemp, Display, TEXT("AThrowableActor::Launch"));
 	if (State == EState::Pull || State == EState::Attached)
 	{
+		UE_LOG(LogTemp, Display, TEXT("States are correct, detaching from actor"));
 		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
 		ProjectileMovementComponent->Activate(true);

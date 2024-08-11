@@ -314,10 +314,13 @@ void ATantrumnCharacterBase::ProcessTraceResult(const FHitResult& HitResult)
 
 bool ATantrumnCharacterBase::PlayThrowMontage()
 {
+	UE_LOG(LogTemp, Display, TEXT("ATantrumnCharacterBase::PlayThrowMontage"));
 	const float PlayRate = 1.0f;
 	bool bPlayedSuccessfully = PlayAnimMontage(ThrowMontage, PlayRate) > 0.f;
 	if (bPlayedSuccessfully)
 	{
+		UE_LOG(LogTemp, Display, TEXT("bPlayedSuccessfully"));
+
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
 		if (!BlendingOutDelegate.IsBound())
@@ -372,6 +375,7 @@ void ATantrumnCharacterBase::OnMontageEnded(UAnimMontage* Montage, bool bInterru
 
 void ATantrumnCharacterBase::OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
+	UE_LOG(LogTemp, Display, TEXT("ATantrumnCharacterBase::OnNotifyBeginReceived"));
 	//ignore collisions otherwise the throwable object hits the player capsule and doesn't travel in the desired direction
 	if (ThrowableActor->GetRootComponent())
 	{

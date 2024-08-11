@@ -25,7 +25,8 @@ EGameState ATantrumGameModeBase::GetCurrentGameState() const
 void ATantrumGameModeBase::PlayerReachedEnd()
 {
 	CurrentGameState = EGameState::GameOver;
-	//GameWidget->LevelComplete();
+	
+	GameWidget->LevelComplete();
 	FInputModeUIOnly InputMode;
 	PC->SetInputMode(InputMode);
 	PC->SetShowMouseCursor(true);
@@ -44,10 +45,10 @@ void ATantrumGameModeBase::DisplayCountdown()
 void ATantrumGameModeBase::StartGame()
 {
 	CurrentGameState = EGameState::Playing;
-	//FInputModeGameOnly InputMode;
-	//PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	//PC->SetInputMode(InputMode);
-	//PC->SetShowMouseCursor(false);
+	FInputModeGameOnly InputMode;
+	PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PC->SetInputMode(InputMode);
+	PC->SetShowMouseCursor(false);
 
 }
 
