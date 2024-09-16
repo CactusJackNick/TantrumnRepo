@@ -51,6 +51,7 @@ ATantrumnCharacterBase::ATantrumnCharacterBase()
 void ATantrumnCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	EffectCooldown = DefaultEffectCooldown;
 	if (GetCharacterMovement())
 	{
 		MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
@@ -67,6 +68,21 @@ void ATantrumnCharacterBase::Tick(float DeltaTime)
 	{
 		return;
 	}
+
+	if (bIsUnderEffect)
+	{
+		if (EffectCooldown > 0)
+		{
+			EffectCooldown -= DeltaTime;
+		}
+		else
+		{
+			bIsUnderEffect = false;
+			EffectCooldown = DefaultEffectCooldown;
+			EndEffect();
+		}
+	}
+
 	if (CharacterThrowState == ECharacterThrowState::Throwing)
 	{
 		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
@@ -190,6 +206,13 @@ void ATantrumnCharacterBase::ResetThrowableObject()
 	}
 	CharacterThrowState = ECharacterThrowState::None;
 	ThrowableActor = nullptr;
+}
+
+void ATantrumnCharacterBase::RequestUseObject()
+{
+	ApplyEffect_Implementation(ThrowableActor->GetEffectType(), true);
+	ThrowableActor->Destroy();
+	ResetThrowableObject();
 }
 
 void ATantrumnCharacterBase::OnThrowableAttached(AThrowableActor* InThrowableActor)
@@ -323,17 +346,17 @@ bool ATantrumnCharacterBase::PlayThrowMontage()
 
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
-		if (!BlendingOutDelegate.IsBound())
-		{
-			BlendingOutDelegate.BindUObject(this, &ATantrumnCharacterBase::OnMontageBlendingOut);
-		}
-		AnimInstance->Montage_SetBlendingOutDelegate(BlendingOutDelegate, ThrowMontage);
+		//if (!BlendingOutDelegate.IsBound())
+		//{
+		//	BlendingOutDelegate.BindUObject(this, &ATantrumnCharacterBase::OnMontageBlendingOut);
+		//}
+		//AnimInstance->Montage_SetBlendingOutDelegate(BlendingOutDelegate, ThrowMontage);
 
-		if (!MontageEndedDelegate.IsBound())
-		{
-			MontageEndedDelegate.BindUObject(this, &ATantrumnCharacterBase::OnMontageEnded);
-		}
-		AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, ThrowMontage);
+		//if (!MontageEndedDelegate.IsBound())
+		//{
+		//	MontageEndedDelegate.BindUObject(this, &ATantrumnCharacterBase::OnMontageEnded);
+		//}
+		//AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, ThrowMontage);
 
 		AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &ATantrumnCharacterBase::OnNotifyBeginReceived);
 		AnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &ATantrumnCharacterBase::OnNotifyEndReceived);
@@ -359,6 +382,7 @@ void ATantrumnCharacterBase::OnMontageBlendingOut(UAnimMontage* Montage, bool bI
 
 void ATantrumnCharacterBase::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
+	UE_LOG(LogTemp, Display, TEXT("ATantrumnCharacterBase::OnMontageEnded(UAnimMontage * Montage, bool bInterrupted)"));
 	UnbindMontage();
 	CharacterThrowState = ECharacterThrowState::None;
 	MoveIgnoreActorRemove(ThrowableActor);
@@ -385,8 +409,8 @@ void ATantrumnCharacterBase::OnNotifyBeginReceived(FName NotifyName, const FBran
 			RootPrimitiveComponent->IgnoreActorWhenMoving(this, true);
 		}
 	}
-	//const FVector& Direction = GetMesh()->GetSocketRotation(TEXT("ObjectAttach")).Vector() * -ThrowSpeed;
-	const FVector& Direction = GetActorForwardVector() * ThrowSpeed;
+	const FVector& Direction = GetMesh()->GetSocketRotation(TEXT("ObjectAttach")).Vector() * -ThrowSpeed;
+	//const FVector& Direction = GetActorForwardVector() * ThrowSpeed;
 	ThrowableActor->Launch(Direction);
 
 	if (CVarDisplayThrowVelocity->GetBool())
@@ -440,3 +464,47 @@ void ATantrumnCharacterBase::OnStunEnd()
 	StunTime = 0.0f;
 }
 
+
+void ATantrumnCharacterBase::ApplyEffect_Implementation(EEffectType EffectType, bool bIsBuff)
+{
+	if (bIsUnderEffect) return;
+
+	CurrentEffect = EffectType;
+	bIsUnderEffect = true;
+	bIsUnderEffect = bIsBuff;
+
+	/*switch (CurrentEffect)
+	{
+	case EEffectType::Speed :
+		bIsEffectBuff ? SprintSpeed *= 2 : GetCharacterMovement()->DisableMovement();
+		break;*/
+	switch (CurrentEffect)
+	{
+	case EEffectType::Speed:
+		if (bIsEffectBuff)
+		{
+			SprintSpeed *= 2;
+		}
+		else
+		{
+			GetCharacterMovement()->DisableMovement();
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void ATantrumnCharacterBase::EndEffect()
+{
+	bIsUnderEffect = false;
+	switch (CurrentEffect)
+	{
+	case EEffectType::Speed :
+			bIsEffectBuff ? SprintSpeed /= 2, RequestSprintEnd() : GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+			break;
+	default:
+		break;
+	}
+}
